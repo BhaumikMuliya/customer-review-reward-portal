@@ -1,7 +1,7 @@
 import { thirdweb } from "../assets";
 import Web3 from "web3";
 import { useStateAuth } from "../context/StateProvider";
-import BigNumber from "bignumber.js";
+// import BigNumber from "bignumber.js";
 const MarketCard = ({
   id,
   company_name,

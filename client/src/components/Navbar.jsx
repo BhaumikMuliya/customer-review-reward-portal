@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 // import { useFlowAuth } from "../context/FlowProvider";
 import { CustomButton } from "./";
-import { menu, search, thirdweb } from "../assets";
+import { menu, search } from "../assets";
 import { customerNavlinks, companyNavlinks } from "../constants";
 import Logo from "../assets/logo.png";
 import { useLocation } from "react-router-dom";

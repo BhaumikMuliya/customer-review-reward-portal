@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { IoCallOutline } from "react-icons/io5";
 import { useStateAuth } from "../context/StateProvider";
-import axios from "axios";
+// import axios from "axios";
 
 const CallButton = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
-  const [otpSubmitted, setOtpSubmitted] = useState(false);
+  const [, setOtpSent] = useState(false);
+  const [, setOtpSubmitted] = useState(false);
   const [otpInput, setOtpInput] = useState("");
   const { createSupervisor, verifyOtp } = useStateAuth();
 

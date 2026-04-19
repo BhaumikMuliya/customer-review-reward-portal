@@ -1,4 +1,3 @@
-import React from "react";
 import { imgLanding } from "../assets";
 const CompanyLandingPage = () => {
   return (

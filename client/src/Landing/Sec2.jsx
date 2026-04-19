@@ -1,4 +1,3 @@
-import React from "react";
 import "./Sec2.css";
 import { FaPenFancy } from "react-icons/fa";
 import { FaBitcoin } from "react-icons/fa";

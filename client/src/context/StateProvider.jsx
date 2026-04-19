@@ -180,7 +180,7 @@ export const StateProvider = ({ children }) => {
 
   //--------------------------Callchimp functions-----------------------------------------
 
-  const getPhone = async () => {};
+  // const getPhone = async () => {};
 
   const createSupervisor = async (number) => {
     // const requestParameters = {

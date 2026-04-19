@@ -28,7 +28,7 @@ export default function Component() {
           </Button>
           <div className="flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
-              Don't have an account yet?{" "}
+              Don&apos;t have an account yet?{" "}
               <Link href="#" className="font-medium underline" prefetch={false}>
                 Sign up
               </Link>

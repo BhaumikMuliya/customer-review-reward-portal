@@ -1,4 +1,3 @@
-import React from "react";
 import Side2 from "../assets/side1.png";
 import "./Sec3.css";
 const Sec3 = () => {

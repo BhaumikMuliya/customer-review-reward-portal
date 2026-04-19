@@ -1,6 +1,5 @@
 import { useState } from "react";
 import ABI from "../routerNitro/abi.json";
-import ABI2 from "../routerNitro/abi2.json";
 import { ethers } from "ethers";
 import axios from "axios";
 import tokens from "../routerNitro/data.json";
@@ -32,7 +31,7 @@ const RouterProtocol = () => {
   const to = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"; //AVAX
   const [amount, setAmount] = useState(0);
 
-  const [quoteData, setQuoteData] = useState("");
+  const [, setQuoteData] = useState("");
   const [holskyBalance, setholskyBalance] = useState(0);
   const [avalancheBalance, setAvalancheBalance] = useState(0);
   const [account, setAccount] = useState("Connect Wallet");
@@ -130,16 +129,16 @@ const RouterProtocol = () => {
             selectedToken1.rpc_url,
             Number(selectedToken1.chainId),
           );
-          const signer = provider.getSigner();
+          provider.getSigner();
 
-          const contract = new ethers.Contract(to, ABI, provider1);
+          new ethers.Contract(to, ABI, provider1);
 
           //   let balance = await contract.balanceOf(accounts[0])
           let balance = await provider1.getBalance(accounts[0]);
 
           console.log(ethers.utils.formatEther(balance) * Math.pow(10, 18));
           setholskyBalance(ethers.utils.formatEther(balance));
-          const contract2 = new ethers.Contract(from, ABI, provider2);
+          new ethers.Contract(from, ABI, provider2);
           // balance = await contract2.balanceOf(accounts[0])
           balance = await provider2.getBalance(accounts[0]);
           console.log(ethers.utils.formatEther(balance) * Math.pow(10, 12));

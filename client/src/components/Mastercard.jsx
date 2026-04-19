@@ -2,6 +2,7 @@ import "./Mastercard.css";
 import copy from "copy-text-to-clipboard";
 import { FaRegCopy } from "react-icons/fa";
 import { toast } from "react-toastify";
+
 const Mastercard = ({ name, avax, diam, pkey, skey }) => {
   function copy1() {
     copy(pkey);
@@ -44,13 +45,13 @@ const Mastercard = ({ name, avax, diam, pkey, skey }) => {
               className="chip8"
               id="Layer_1"
               xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink"
+              xmlnsXlink="http://www.w3.org/1999/xlink"
               x="0px"
               y="0px"
               width="42px"
               height="42px"
               viewBox="0 0 50 50"
-              xml:space="preserve"
+              xmlSpace="preserve"
             >
               {" "}
               <image
@@ -92,13 +93,13 @@ const Mastercard = ({ name, avax, diam, pkey, skey }) => {
               className="contactless8"
               id="Layer_1"
               xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink"
+              xmlnsXlink="http://www.w3.org/1999/xlink"
               x="0px"
               y="0px"
               width="42px"
               height="42px"
               viewBox="0 0 50 50"
-              xml:space="preserve"
+              xmlSpace="preserve"
             >
               {" "}
               <image

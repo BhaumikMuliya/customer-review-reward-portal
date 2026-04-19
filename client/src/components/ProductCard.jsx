@@ -3,10 +3,10 @@ import { tagType, thirdweb } from "../assets";
 const ProductCard = ({
   company_name,
   name,
-  owner,
+  // owner,
   typ,
   nextAmount,
-  amt,
+  // amt,
   reviewCount,
   min_review_count,
   prodimg,

@@ -19,7 +19,7 @@ const ProductDetails = () => {
     questionAnswers: [],
   });
   const { userData } = useStateAuth();
-  const [reviews, setReviews] = useState([]);
+  const [reviews] = useState([]);
   const [questions, setQuestions] = useState([]);
   const [orderid, setorderid] = useState("null");
   const [isOrderIdTracking, setIsOrderIdTracking] = useState(false);

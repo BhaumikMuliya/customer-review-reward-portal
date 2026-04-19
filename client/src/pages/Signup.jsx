@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 // import { create } from "@web3-storage/w3up-client";
 import "./Signup.css"; // Import your CSS file
 import Navbar from "../Landing/Navbar";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-import { useStateAuth } from "../context/StateProvider";
+// import { useStateAuth } from "../context/StateProvider";
 
 const Signup = () => {
-  const { userData } = useStateAuth();
+  // const { userData } = useStateAuth();
   const [formData, setFormData] = useState({
     companyName: "",
     companyEmail: "",

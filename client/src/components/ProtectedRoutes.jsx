@@ -21,10 +21,8 @@ const ProtectedRoutes = ({ user }) => {
   const [serverStatus, setServerStatus] = useState("checking"); // checking | up | down
   const hasAlertedRef = useRef(false);
 
-  // Treat "no userData yet" as loading (common when auth hydrates from storage/api)
-  if (!userData) return <Spinner />;
-
   const isAllowed = userData?.type === user;
+
   useEffect(() => {
     if (!isAllowed) return;
 
@@ -64,6 +62,9 @@ const ProtectedRoutes = ({ user }) => {
       controller.abort();
     };
   }, [isAllowed]);
+
+  // Treat "no userData yet" as loading (common when auth hydrates from storage/api)
+  if (!userData) return <Spinner />;
 
   if (isAllowed) {
     if (serverStatus === "checking") return <Spinner />;

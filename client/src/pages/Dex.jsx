@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 
 function Dex() {
-  const [baseUrl, setbaseurl] = useState("https://app.thevoyager.io/swap");
+  const [baseUrl] = useState("https://app.thevoyager.io/swap");
 
   const configuration = {
     isWidget: true,
@@ -22,12 +22,13 @@ function Dex() {
 
   const paramString = new URLSearchParams(configuration).toString();
   // document.getElementById("widget__iframe").src = `${baseUrl}?${paramString}`;
-  const srcWidget = useRef(`${baseUrl}?${paramString}`);
+  useRef(`${baseUrl}?${paramString}`);
 
   return (
     <div>
       <iframe
         id="widget__iframe"
+        title="DEX Exchange Widget"
         height="610px"
         width="420px"
         src="https://app.thevoyager.io/swap?isWidget=true&widgetId=widget-0101&fromChain=56&toChain=137&fromToken=0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56&toToken=0x16ECCfDbb4eE1A85A33f3A9B21175Cd7Ae753dB4"
