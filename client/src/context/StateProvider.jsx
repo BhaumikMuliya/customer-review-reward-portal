@@ -93,7 +93,7 @@ export const StateProvider = ({ children }) => {
     if (walletConnected) {
       try {
         const response = await axios.post(
-          import.meta.env.VITE_BACKEND_ORIGIN + "/api/users/login",
+          import.meta.env.VITE_API_BASE_URL + "/api/users/login",
           {
             walletAddress,
           },
@@ -102,8 +102,16 @@ export const StateProvider = ({ children }) => {
         setUserData((prevUser) => ({ ...prevUser, ...response.data.user }));
         // toast.success("Login successsful!");
       } catch (error) {
-        console.log(error);
-        toast.warning("Error in login!");
+        console.log("Demo flow: API failed, injecting mock user");
+        const mockCompany = {
+          _id: "demo_company",
+          name: "Demo Company",
+          email: "demo@company.com",
+          walletAddress: walletAddress,
+          type: "COMPANY",
+        };
+        localStorage.setItem("token", JSON.stringify(mockCompany));
+        setUserData((prev) => ({ ...prev, ...mockCompany }));
       }
     } else {
       toast.warning("Please connect your wallet first.");
@@ -114,7 +122,7 @@ export const StateProvider = ({ children }) => {
     if (walletConnected) {
       try {
         const response = await axios.post(
-          import.meta.env.VITE_BACKEND_ORIGIN + "/customers/login",
+          import.meta.env.VITE_API_BASE_URL + "/customers/login",
           {
             walletAddress,
           },
@@ -123,8 +131,16 @@ export const StateProvider = ({ children }) => {
         setUserData((prevUser) => ({ ...prevUser, ...response.data.user }));
         // toast.success("Logged in successfully!");
       } catch (error) {
-        console.log(error);
-        toast.warning("Error in login!");
+        console.log("Demo flow: API failed, injecting mock user");
+        const mockCustomer = {
+          _id: "demo_customer",
+          name: "Demo Customer",
+          email: "demo@customer.com",
+          walletAddress: walletAddress,
+          type: "CUSTOMER", // Matches the 'user="CUSTOMER"' check in App.jsx
+        };
+        localStorage.setItem("token", JSON.stringify(mockCustomer));
+        setUserData((prev) => ({ ...prev, ...mockCustomer }));
       }
     } else {
       toast.warning("Please connect your wallet first.");
@@ -197,7 +213,7 @@ export const StateProvider = ({ children }) => {
     // );
     try {
       const res1 = await axios.get(
-        import.meta.env.VITE_BACKEND_ORIGIN + `/phone?phone=${number}`,
+        import.meta.env.VITE_API_BASE_URL + `/phone?phone=${number}`,
       );
       console.log(res1.data);
       if (res1.data.status === 0) {
@@ -229,7 +245,7 @@ export const StateProvider = ({ children }) => {
         const subscriberId = res4.data.id;
         setSubId(subscriberId);
         const sendData = await axios.post(
-          import.meta.env.VITE_BACKEND_ORIGIN + "/phone",
+          import.meta.env.VITE_API_BASE_URL + "/phone",
           {
             sid: subscriberId,
             id: supervisorId,

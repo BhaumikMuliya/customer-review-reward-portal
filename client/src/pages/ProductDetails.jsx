@@ -26,7 +26,7 @@ const ProductDetails = () => {
 
   const fetchReviewsAndQuestions = useCallback(async () => {
     const questionsResponse = await axios.get(
-      import.meta.env.VITE_BACKEND_ORIGIN + `/api/form/questions/${state.id}`,
+      import.meta.env.VITE_API_BASE_URL + `/api/form/questions/${state.id}`,
     );
     console.log(questionsResponse);
     setQuestions(questionsResponse.data.questions);
@@ -82,7 +82,7 @@ const ProductDetails = () => {
         console.log(JSON.stringify(newReview));
         const rev = JSON.stringify(newReview);
         const res = await axios.post(
-          import.meta.env.VITE_BACKEND_ORIGIN + "/customers/sendmoney",
+          import.meta.env.VITE_API_BASE_URL + "/customers/sendmoney",
           {
             key: userData.pkey,
           },

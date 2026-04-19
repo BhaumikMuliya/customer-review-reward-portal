@@ -30,7 +30,7 @@ const UserSignup = () => {
       const generateOTP = Math.floor(1000 + Math.random() * 9000);
       setReal(generateOTP);
       const response = await axios.post(
-        import.meta.env.VITE_BACKEND_ORIGIN + "/customers/sendotp",
+        import.meta.env.VITE_API_BASE_URL + "/customers/sendotp",
         {
           otp: generateOTP,
           email: companyEmail,
@@ -95,7 +95,7 @@ const UserSignup = () => {
 
       // Example POST request using axios
       const response = await axios.post(
-        import.meta.env.VITE_BACKEND_ORIGIN + "/customers/create",
+        import.meta.env.VITE_API_BASE_URL + "/customers/create",
         dataToSend,
       );
       console.log(response.data); // Handle response as needed

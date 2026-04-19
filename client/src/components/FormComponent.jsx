@@ -233,7 +233,7 @@ const FormComponent = () => {
       console.log(allData);
       const response = await axios({
         method: "post",
-        url: import.meta.env.VITE_BACKEND_ORIGIN + "/api/form/questions",
+        url: import.meta.env.VITE_API_BASE_URL + "/api/form/questions",
         data: allData,
       });
       console.log(response);

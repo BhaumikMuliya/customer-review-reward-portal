@@ -11,7 +11,7 @@ const Profile = () => {
   React.useEffect(() => {
     const getDiam = async () => {
       const res = await axios.get(
-        import.meta.env.VITE_BACKEND_ORIGIN + "/customers/getbalance",
+        import.meta.env.VITE_API_BASE_URL + "/customers/getbalance",
         { params: { pkey: userData.pkey } },
       );
       console.log(res);

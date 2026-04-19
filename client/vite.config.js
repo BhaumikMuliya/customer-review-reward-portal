@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
 
   // Backend defaults to server/config/config.js default port (5000)
-  const backendOrigin = env.VITE_BACKEND_ORIGIN || "http://localhost:5000";
+  const backendOrigin = env.VITE_API_BASE_URL || "http://localhost:5000";
 
   return {
     plugins: [react()],
