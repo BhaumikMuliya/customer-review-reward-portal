@@ -122,7 +122,7 @@ export const StateProvider = ({ children }) => {
     if (walletConnected) {
       try {
         const response = await axios.post(
-          import.meta.env.VITE_API_BASE_URL + "/customers/login",
+          import.meta.env.VITE_API_BASE_URL + "/api/customers/login",
           {
             walletAddress,
           },

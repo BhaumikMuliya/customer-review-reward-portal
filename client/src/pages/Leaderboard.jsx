@@ -9,13 +9,13 @@ const Leaderboard = () => {
   useEffect(() => {
     const getalluser = async () => {
       const res = await axios.get(
-        import.meta.env.VITE_API_BASE_URL + "/customers/getall",
+        import.meta.env.VITE_API_BASE_URL + "/api/customers/getall",
       );
       const user = res.data;
       var alld = [];
       for (var i = 0; i < user.length; i++) {
         const res2 = await axios.get(
-          import.meta.env.VITE_API_BASE_URL + "/customers/getbalance",
+          import.meta.env.VITE_API_BASE_URL + "/api/customers/getbalance",
           {
             params: { pkey: user[i].pkey },
           },
