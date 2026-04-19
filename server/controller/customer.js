@@ -59,30 +59,42 @@ async function sendOTPViaEmail(emailed, otp) {
 const createCustomer = async (req, res) => {
   const { name, companyEmail, walletAddress } = req.body;
 
+  // Generate Diamante keypair
   const keypair = Keypair.random();
   console.log("Keypair created:", keypair.publicKey(), keypair.secret());
   const pkey = keypair.publicKey();
   const skey = keypair.secret();
 
-  const fetch = await import("node-fetch").then((mod) => mod.default);
-
-  const response = await fetch(`https://friendbot.diamcircle.io/?addr=${pkey}`);
-
-  if (!response.ok) {
-    throw new Error(
-      `Failed to activate account ${pkey}: ${response.statusText}`,
+  // Activate account on Diamante testnet via friendbot
+  try {
+    const fetch = await import("node-fetch").then((mod) => mod.default);
+    const response = await fetch(
+      `https://friendbot.diamcircle.io/?addr=${pkey}`,
     );
+
+    if (!response.ok) {
+      const text = await response.text();
+      console.error(`Friendbot activation failed (${response.status}): ${text}`);
+      return res.status(502).json({
+        message: "Could not activate Diamante account. Please try again later.",
+      });
+    }
+
+    const result = await response.json();
+    console.log(`Account ${pkey} activated`, result?.id ?? "");
+  } catch (friendbotErr) {
+    // Network-level failure (DNS, timeout, etc.) — log but continue so the
+    // user record is still created. The account can be funded later.
+    console.error("Friendbot network error (non-fatal):", friendbotErr.message);
   }
-  const result = await response.json();
-  console.log(`Account ${pkey} activated`, result);
 
   const payload = {
-    name: name,
+    name,
     email: companyEmail,
-    walletAddress: walletAddress,
+    walletAddress,
     type: "user",
-    pkey: pkey,
-    skey: skey,
+    pkey,
+    skey,
   };
 
   await CustomerService.create(payload);
