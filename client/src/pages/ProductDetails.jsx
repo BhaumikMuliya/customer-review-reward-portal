@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import { useLocation } from "react-router-dom";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Countbox, CustomButton, Loader } from "../components";
 import { thirdweb } from "../assets";
 import Web3 from "web3";
@@ -8,179 +8,263 @@ import MoneyDistribution from "../abi/MoneyDistribution.json";
 import { useStateAuth } from "../context/StateProvider";
 import { toast } from "react-toastify";
 
-const ProductDetails = () => {
-  const { state } = useLocation();
-  const [isLoading, setIsLoading] = useState(false);
-  const [isValidating, setIsValidating] = useState(false);
-  const [newReview, setNewReview] = useState({
-    name: "",
-    orderId: "",
-    description: "",
-    attachments: [],
-    questionAnswers: [],
-  });
-  const { userData } = useStateAuth();
-  const [reviews] = useState([]);
-  const [questions, setQuestions] = useState([]);
-  const [orderid, setorderid] = useState("null");
-  const [isOrderIdTracking, setIsOrderIdTracking] = useState(false);
+function buildValidationPayload(questions, questionAnswers) {
+  return questions
+    .filter((q) => q.type === "short")
+    .map((q) => ({
+      question: q.q,
+      answer: questionAnswers[q.q] ?? "",
+    }));
+}
 
-  const fetchReviewsAndQuestions = useCallback(async () => {
-    const questionsResponse = await axios.get(
-      import.meta.env.VITE_API_BASE_URL + `/api/form/questions/${state.id}`,
-    );
-    console.log(questionsResponse);
-    setQuestions(questionsResponse.data.questions);
-    setIsOrderIdTracking(questionsResponse.data.isOrderIdTracking);
-  }, [state.id]);
+function serializeReview(review, questions) {
+  return JSON.stringify({
+    name: review.name,
+    orderId: review.orderId,
+    description: review.description,
+    questionAnswers: questions.map((q) => ({
+      question: q.q,
+      answer: review.questionAnswers[q.q] ?? "",
+    })),
+  });
+}
+
+const EMPTY_REVIEW = {
+  name: "",
+  orderId: "",
+  description: "",
+  attachments: [],
+  questionAnswers: {},
+};
+
+const ProductDetails = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { userData } = useStateAuth();
+
+  const product = location.state;
+
+  const isSubmitting = useRef(false);
+
+  const [contract, setContract] = useState(null);
+  const [questions, setQuestions] = useState([]);
+  const [isOrderIdTracking, setIsOrderIdTracking] = useState(false);
+  const [newReview, setNewReview] = useState(EMPTY_REVIEW);
+  const [isValidating, setIsValidating] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [fetchError, setFetchError] = useState("");
+  const [noQuestionsConfigured, setNoQuestionsConfigured] = useState(false);
+
+  const productMissing = !product || !product.id;
 
   useEffect(() => {
-    if (userData) fetchReviewsAndQuestions();
-  }, [userData, fetchReviewsAndQuestions]);
+    if (productMissing) return;
 
-  const handleReviewSubmit = async (e) => {
-    e.preventDefault();
-    setIsValidating(true);
-    var forGemmacheck = [];
-    for (let i = 0; i < newReview.questionAnswers.length; i++) {
-      for (let j = 0; j < questions.length; j++) {
-        if (newReview.questionAnswers[i].question == questions[j].q) {
-          if (questions[j].type === "short") {
-            forGemmacheck.push({
-              question: questions[j].q,
-              answer: newReview.questionAnswers[i].answer,
-            });
-          }
-        }
-      }
-    }
-    console.log(forGemmacheck);
-
-    try {
-      const res = await axios.post("http://localhost:8000/validate-answer2", {
-        qna: forGemmacheck,
-      });
-      console.log("ACTUAL", res.data);
-      console.log(res.data.validation);
-
-      const validationResponses = res.data.validation.split(" ,,,, ");
-      let isValid = true;
-
-      for (const response of validationResponses) {
-        if (response.trim() === "no") {
-          alert("Answer not validated");
-          isValid = false;
-          break;
-        }
-      }
-
-      if (isValid) {
-        setIsValidating(false);
-
-        // Proceed with further actions if all answers are validated
-        setIsLoading(true);
-
-        console.log(JSON.stringify(newReview));
-        const rev = JSON.stringify(newReview);
-        const res = await axios.post(
-          import.meta.env.VITE_API_BASE_URL + "/customers/sendmoney",
-          {
-            key: userData.pkey,
-          },
+    let active = true;
+    async function initWeb3() {
+      try {
+        const { ethereum } = window;
+        if (!ethereum) return;
+        const web3 = new Web3(ethereum);
+        const networkId = await web3.eth.net.getId();
+        const deployed = MoneyDistribution.networks[networkId];
+        if (!deployed) return;
+        const c = new web3.eth.Contract(
+          MoneyDistribution.abi,
+          deployed.address,
         );
-        console.log(res.data);
-        if (res.data.status == true) {
-          setNewReview({
-            name: "",
-            orderId: "",
-            description: "",
-            attachments: [],
-            questionAnswers: [],
-          });
-          await BsubmitReview(orderid, rev);
-          setIsLoading(false);
-        }
-        console.log("All answers validated successfully");
+        if (active) setContract(c);
+      } catch (err) {
+        console.error("Web3 init error:", err);
       }
-    } catch (error) {
-      console.error(error);
-      toast.error("An error occurred during validation");
     }
-  };
+    initWeb3();
+    return () => {
+      active = false;
+    };
+  }, [productMissing]);
+
+  const fetchQuestions = useCallback(async () => {
+    if (!product?.id) return;
+    setFetchError("");
+    setNoQuestionsConfigured(false);
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/api/questions/${product.id}`,
+      );
+      setQuestions(res.data.questions ?? []);
+      setIsOrderIdTracking(res.data.isOrderIdTracking ?? false);
+    } catch (err) {
+      if (err.response?.status === 404) {
+        setNoQuestionsConfigured(true);
+        setQuestions([]);
+      } else {
+        console.error("Questions fetch error:", err);
+        setFetchError(
+          "Could not load review questions. Please refresh the page.",
+        );
+      }
+    }
+  }, [product?.id]);
+
+  useEffect(() => {
+    if (userData && !productMissing) fetchQuestions();
+  }, [userData, productMissing, fetchQuestions]);
+
+  useEffect(() => {
+    if (!isOrderIdTracking) {
+      setNewReview((prev) => ({ ...prev, orderId: "", attachments: [] }));
+    }
+  }, [isOrderIdTracking]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (name === "orderId") {
-      setorderid(value);
-    }
-    setNewReview((prevReview) => ({
-      ...prevReview,
-      [name]: value,
+    setNewReview((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleAnswerChange = (questionText, value) => {
+    setNewReview((prev) => ({
+      ...prev,
+      questionAnswers: { ...prev.questionAnswers, [questionText]: value },
     }));
   };
 
-  const handleQuestionAnswerChange = (e, index) => {
-    const { value } = e.target;
-    setNewReview((prevReview) => {
-      const newQuestionAnswers = [...prevReview.questionAnswers];
-      newQuestionAnswers[index] = {
-        question: questions[index].q,
-        answer: value,
-      };
-      return {
-        ...prevReview,
-        questionAnswers: newQuestionAnswers,
-      };
-    });
+  const handleAttachmentChange = (e) => {
+    setNewReview((prev) => ({
+      ...prev,
+      attachments: Array.from(e.target.files),
+    }));
   };
-  /////////////////////////////////////////////////
 
-  const { ethereum } = window;
-  const [statee, setState] = useState({
-    web3: null,
-    contract: null,
-  });
-  useEffect(() => {
-    async function template() {
-      const web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
-      const networkId = await web3.eth.net.getId();
-      const deployedNetwork = MoneyDistribution.networks[networkId];
-      const contract = new web3.eth.Contract(
-        MoneyDistribution.abi,
-        deployedNetwork.address,
-      );
-      console.log(contract);
-      setState({ web3: web3, contract: contract });
-    }
-    template();
-  }, []);
+  const resetForm = () => {
+    setNewReview(EMPTY_REVIEW);
+    setSubmitSuccess(false);
+  };
 
-  const BsubmitReview = async (oid, rev) => {
-    console.log("S2");
-    console.log(oid, rev);
-    console.log(statee);
-    const { contract } = statee;
-    const accountss = await ethereum.request({
-      method: "eth_requestAccounts",
-    });
+  const submitOnChain = async (orderId, serializedReview) => {
+    if (!contract) throw new Error("Smart contract not initialized.");
+    const { ethereum } = window;
+    if (!ethereum) throw new Error("MetaMask is not installed.");
+
+    const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+    const tx = await contract.methods
+      .NewReview(orderId, product.id, serializedReview)
+      .send({ from: accounts[0] });
+
+    return tx;
+  };
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+
+    if (isSubmitting.current) return;
+    isSubmitting.current = true;
+
+    const validationPayload = buildValidationPayload(
+      questions,
+      newReview.questionAnswers,
+    );
+    const serialized = serializeReview(newReview, questions);
+
+    setIsValidating(true);
     try {
-      // NewReview(string memory orderID, string memory prodID, string memory review)
-      const pid = state.id;
-      console.log(oid, pid, rev);
-      const res = await contract.methods
-        .NewReview(oid.toString(), pid, rev)
-        .send({ from: accountss[0] });
+      if (validationPayload.length > 0) {
+        const res = await axios.post("http://localhost:8000/validate-answer2", {
+          qna: validationPayload,
+        });
 
-      console.log(res);
+        const parts = (res.data?.validation ?? "").split(" ,,,, ");
+        const failed = parts.some((r) => r.trim() === "no");
 
-      toast.success(res.events.event1.returnValues[0]);
-      window.location.reload();
+        if (failed) {
+          toast.error(
+            "One or more answers did not pass our quality check. Please review and try again.",
+          );
+          return;
+        }
+      }
     } catch (err) {
-      console.log(err);
+      console.error("Validation service error:", err);
+      toast.error(
+        "The answer validation service is currently unavailable. Please try again shortly.",
+      );
+      return;
+    } finally {
+      setIsValidating(false);
+    }
+
+    setIsLoading(true);
+    try {
+      const moneyRes = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/customers/sendmoney`,
+        { key: userData.pkey },
+      );
+
+      if (moneyRes.data?.status !== true) {
+        toast.error(
+          "Payment could not be authorised. Please check your account balance and try again.",
+        );
+        return;
+      }
+    } catch (err) {
+      console.error("sendmoney error:", err);
+      const message =
+        err.response?.data?.message ??
+        "A server error occurred during payment. Please try again.";
+      toast.error(message);
+      return;
+    }
+
+    try {
+      const orderId = isOrderIdTracking
+        ? newReview.orderId.trim() || "null"
+        : "null";
+
+      const tx = await submitOnChain(orderId, serialized);
+
+      const contractMsg = tx?.events?.event1?.returnValues?.[0];
+      toast.success(contractMsg ?? "Review submitted successfully!");
+
+      setSubmitSuccess(true);
+      setNewReview(EMPTY_REVIEW);
+    } catch (err) {
+      console.error("Blockchain tx error:", err);
+      if (err?.code === 4001) {
+        toast.warn("Transaction was cancelled in MetaMask.");
+      } else {
+        toast.error(
+          "Blockchain submission failed. Your payment may already have been processed — contact support if needed.",
+        );
+      }
+    } finally {
+      setIsLoading(false);
+      isSubmitting.current = false;
     }
   };
 
-  ////////////////////////////////////////////////
+  if (productMissing) {
+    return (
+      <div className="flex flex-col items-center justify-center mt-20 gap-6">
+        <div className="bg-[#1c1c24] p-8 rounded-[10px] text-center max-w-md">
+          <p className="font-epilogue font-semibold text-[18px] text-[#808191] mb-4">
+            No product data found.
+          </p>
+          <p className="font-epilogue text-[14px] text-[#4b5264] mb-6">
+            Please navigate here from the Marketplace — direct URL access is not
+            supported.
+          </p>
+          <button
+            onClick={() => navigate(-1)}
+            className="bg-[#8c6dfd] text-white px-6 py-2 rounded-[10px] font-epilogue hover:bg-[#00cec9] transition duration-300"
+          >
+            ← Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       {isLoading && <Loader />}
@@ -188,41 +272,40 @@ const ProductDetails = () => {
       <div className="w-full flex md:flex-row flex-col mt-10 gap-[30px]">
         <div className="flex-1 flex-col">
           <img
-            src={state.prodimg}
+            src={product.prodimg}
             alt="Product"
             className="w-full h-[410px] object-cover rounded-xl"
           />
-          <div className="relative w-full h-[5px] bg-[#3a3a43] mt-2">
-            {/* Progress bar implementation */}
-          </div>
+          <div className="relative w-full h-[5px] bg-[#3a3a43] mt-2" />
         </div>
 
         <div className="flex md:w-1/2 flex-wrap justify-between gap-[20px]">
           <Countbox
             title="Price"
-            value={(Number(state.amt) / Math.pow(10, 18)).toFixed(2) + " AVAX"}
+            value={`${(Number(product.amt) / 1e18).toFixed(4)} AVAX`}
           />
-          <Countbox title="Reviews" value={state.reviewCount} />
-          <Countbox title="Min Review" value={state.min_review_count} />
+          <Countbox title="Reviews" value={product.reviewCount ?? 0} />
+          <Countbox title="Min Reviews" value={product.min_review_count ?? 0} />
+
           <div>
             <h4 className="font-epilogue font-semibold text-[18px] text-white mt-8">
               Product Details
             </h4>
 
             <div className="mt-[20px] flex flex-row items-center flex-wrap gap-[14px]">
-              <div className="w-[52px] h-[52px] flex items-center justify-center rounded-full bg-[#2c2f32] cursor-pointer">
+              <div className="w-[52px] h-[52px] flex items-center justify-center rounded-full bg-[#2c2f32]">
                 <img
                   src={thirdweb}
-                  alt="user"
+                  alt="company"
                   className="w-[60%] h-[60%] object-contain"
                 />
               </div>
               <div>
                 <h4 className="font-epilogue font-semibold text-[14px] text-white break-all">
-                  {state.name}
+                  {product.name}
                 </h4>
                 <p className="mt-[4px] font-epilogue font-medium text-[12px] text-[#808191]">
-                  {state.company_name}
+                  {product.company_name}
                 </p>
               </div>
             </div>
@@ -230,12 +313,22 @@ const ProductDetails = () => {
             <h4 className="font-epilogue font-semibold text-[18px] text-white mt-8">
               Description
             </h4>
-
             <div className="mt-[20px] font-epilogue font-normal text-[16px] text-[#808191] leading-[26px] text-justify">
-              <p>{state.prod_Details}</p>
-              <p>Status : {state.status}</p>
-              <p>Next Amt : {state.next_Amount}</p>
-              <p>Owner : {state.owner}</p>
+              <p>{product.prod_Details}</p>
+              <p className="mt-2">
+                Status: <span className="text-white">{product.status}</span>
+              </p>
+              <p>
+                Next Reward:{" "}
+                <span className="text-white">
+                  {product.nextAmount
+                    ? `${(Number(product.nextAmount) / 1e18).toFixed(4)} AVAX`
+                    : "—"}
+                </span>
+              </p>
+              <p className="break-all">
+                Owner: <span className="text-[#4b5264]">{product.owner}</span>
+              </p>
             </div>
           </div>
         </div>
@@ -244,30 +337,13 @@ const ProductDetails = () => {
       <div className="mt-[60px] flex lg:flex-row flex-col gap-5">
         <div className="flex-1 flex flex-col gap-[40px]">
           <div>
-            <h4 className="font-epilogue font-semibold text-[18px] text-white ">
+            <h4 className="font-epilogue font-semibold text-[18px] text-white">
               Reviews
             </h4>
-
-            <div className="mt-[20px] flex flex-col gap-4">
-              {reviews.length > 0 ? (
-                reviews.map((item, index) => (
-                  <div
-                    key={`${item.donator}-${index}`}
-                    className="flex justify-between items-center gap-4"
-                  >
-                    <p className="font-epilogue font-normal text-[16px] text-[#b2b3bd] leading-[26px] break-ll">
-                      {index + 1}. {item.donator}
-                    </p>
-                    <p className="font-epilogue font-normal text-[16px] text-[#808191] leading-[26px] break-ll">
-                      {item.donation}
-                    </p>
-                  </div>
-                ))
-              ) : (
-                <p className="font-epilogue font-normal text-[16px] text-[#808191] leading-[26px] text-justify">
-                  No reviews yet. Be the first one!
-                </p>
-              )}
+            <div className="mt-[20px]">
+              <p className="font-epilogue font-normal text-[16px] text-[#808191] leading-[26px]">
+                No reviews yet. Be the first one!
+              </p>
             </div>
           </div>
         </div>
@@ -278,113 +354,187 @@ const ProductDetails = () => {
           </h4>
 
           <div className="mt-8 flex flex-col p-4 bg-[#1c1c24] rounded-[10px]">
-            <p className="font-epilogue fount-medium text-[20px] leading-[30px] text-center text-[#808191]">
-              Review the Product
-            </p>
-            <form onSubmit={handleReviewSubmit} className="mt-4">
-              <input
-                required
-                name="name"
-                type="text"
-                placeholder="Your name..."
-                className="w-full py-2 my-2 sm:px-[20px] px-[15px] outline-none border-[1px] border-[#3a3a43] bg-transparent font-epilogue text-white text-[18px] leading-[30px] placeholder:text-[#4b5264] rounded-[10px]"
-                value={newReview.name}
-                onChange={handleInputChange}
-              />
-              {isOrderIdTracking && (
-                <>
+            {fetchError && (
+              <div className="bg-red-500/10 border border-red-500/30 rounded-[8px] p-3 mb-4">
+                <p className="font-epilogue text-[13px] text-red-400">
+                  {fetchError}
+                </p>
+                <button
+                  type="button"
+                  onClick={fetchQuestions}
+                  className="mt-2 text-[12px] text-[#8c6dfd] underline font-epilogue"
+                >
+                  Retry
+                </button>
+              </div>
+            )}
+
+            {noQuestionsConfigured && (
+              <div className="bg-[#13131a] border border-[#2c2f32] rounded-[8px] p-3 mb-4 flex items-start gap-3">
+                <span className="text-[#808191] text-[18px] mt-0.5">ℹ️</span>
+                <div>
+                  <p className="font-epilogue font-semibold text-[13px] text-[#808191]">
+                    No custom questions for this product yet.
+                  </p>
+                  <p className="font-epilogue text-[12px] text-[#4b5264] mt-1">
+                    You can still submit your general review below.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {submitSuccess ? (
+              <div className="flex flex-col items-center gap-4 py-10">
+                <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center">
+                  <span className="text-green-400 text-3xl">✓</span>
+                </div>
+                <p className="font-epilogue font-semibold text-[18px] text-green-400">
+                  Review Submitted!
+                </p>
+                <p className="font-epilogue text-[14px] text-[#808191] text-center max-w-xs">
+                  Thank you for your feedback. Your reward will be distributed
+                  after verification.
+                </p>
+                <button
+                  type="button"
+                  onClick={resetForm}
+                  className="bg-[#8c6dfd] text-white px-6 py-2 rounded-[10px] font-epilogue hover:bg-[#00cec9] transition duration-300"
+                >
+                  Submit Another Review
+                </button>
+              </div>
+            ) : (
+              <>
+                <p className="font-epilogue font-medium text-[20px] leading-[30px] text-center text-[#808191]">
+                  Review the Product
+                </p>
+
+                <form onSubmit={handleReviewSubmit} className="mt-4">
                   <input
                     required
-                    name="orderId"
+                    name="name"
                     type="text"
-                    placeholder="Order ID..."
+                    placeholder="Your name..."
                     className="w-full py-2 my-2 sm:px-[20px] px-[15px] outline-none border-[1px] border-[#3a3a43] bg-transparent font-epilogue text-white text-[18px] leading-[30px] placeholder:text-[#4b5264] rounded-[10px]"
-                    value={newReview.orderId}
+                    value={newReview.name}
                     onChange={handleInputChange}
                   />
-                  <input
-                    type="file"
-                    name="attachments"
-                    placeholder="Attach images..."
-                    className="w-full py-3 my-2 sm:px-[20px] px-[15px] outline-none border-[1px] border-[#3a3a43] bg-transparent font-epilogue text-[#4b5264] leading-[30px]  rounded-[10px]"
-                    onChange={(e) =>
-                      setNewReview({
-                        ...newReview,
-                        attachments: e.target.files,
-                      })
-                    }
-                  />
-                </>
-              )}
 
-              <textarea
-                required
-                id="description"
-                name="description"
-                rows={4}
-                placeholder="Write a detailed review..."
-                className="w-full py-2 my-2 sm:px-[20px] px-[15px] outline-none border-[1px] border-[#3a3a43] bg-transparent font-epilogue text-white text-[18px] leading-[30px] placeholder:text-[#4b5264] rounded-[10px]"
-                value={newReview.description}
-                onChange={handleInputChange}
-              />
-
-              <div className="my-[20px] p-4 bg-[#13131a] rounded-[10px]">
-                <h4 className="font-epilogue font-semibold text-[14px] leading-[22px] text-white">
-                  Back it because you believe in it.
-                </h4>
-                <p className="mt-2 font-epilogue font-normal leading-[22px] text-[#808191]">
-                  Support the product because it speaks to you.
-                </p>
-              </div>
-
-              {/* Render questions dynamically */}
-              {questions.map((question, index) => (
-                <div key={index} className="my-4">
-                  <label
-                    className="font-epilogue font-semibold text-[16px] text-white"
-                    htmlFor={`question-${index}`}
-                  >
-                    {question.q}
-                  </label>
-                  {question.type === "short" ? (
-                    <textarea
-                      id={`question-${index}`}
-                      name={`question-${index}`}
-                      rows={2}
-                      placeholder="Your answer..."
-                      className="w-full py-2 my-2 sm:px-[20px] px-[15px] outline-none border-[1px] border-[#3a3a43] bg-transparent font-epilogue text-white text-[18px] leading-[30px] placeholder:text-[#4b5264] rounded-[10px]"
-                      onChange={(e) => handleQuestionAnswerChange(e, index)}
-                    />
-                  ) : (
-                    question.options.map((option, optionIndex) => (
-                      <div key={optionIndex} className="flex items-center my-2">
-                        <input
-                          type="radio"
-                          id={`question-${index}-option-${optionIndex}`}
-                          name={`question-${index}`}
-                          value={option}
-                          className="mr-2"
-                          onChange={(e) => handleQuestionAnswerChange(e, index)}
-                        />
-                        <label
-                          htmlFor={`question-${index}-option-${optionIndex}`}
-                          className="font-epilogue font-normal text-[16px] text-white"
-                        >
-                          {option}
-                        </label>
-                      </div>
-                    ))
+                  {isOrderIdTracking && (
+                    <>
+                      <input
+                        required
+                        name="orderId"
+                        type="text"
+                        placeholder="Order ID..."
+                        className="w-full py-2 my-2 sm:px-[20px] px-[15px] outline-none border-[1px] border-[#3a3a43] bg-transparent font-epilogue text-white text-[18px] leading-[30px] placeholder:text-[#4b5264] rounded-[10px]"
+                        value={newReview.orderId}
+                        onChange={handleInputChange}
+                      />
+                      <input
+                        type="file"
+                        name="attachments"
+                        className="w-full py-3 my-2 sm:px-[20px] px-[15px] outline-none border-[1px] border-[#3a3a43] bg-transparent font-epilogue text-[#4b5264] leading-[30px] rounded-[10px]"
+                        onChange={handleAttachmentChange}
+                      />
+                    </>
                   )}
-                </div>
-              ))}
 
-              <CustomButton
-                btnType="submit"
-                title="Submit"
-                styles="w-full bg-[#8c6dfd] hover:bg-[#00cec9] transition duration-500"
-              />
-              {isValidating && <>Validating Reviews...</>}
-            </form>
+                  <textarea
+                    required
+                    id="description"
+                    name="description"
+                    rows={4}
+                    placeholder="Write a detailed review..."
+                    className="w-full py-2 my-2 sm:px-[20px] px-[15px] outline-none border-[1px] border-[#3a3a43] bg-transparent font-epilogue text-white text-[18px] leading-[30px] placeholder:text-[#4b5264] rounded-[10px]"
+                    value={newReview.description}
+                    onChange={handleInputChange}
+                  />
+
+                  <div className="my-[20px] p-4 bg-[#13131a] rounded-[10px]">
+                    <h4 className="font-epilogue font-semibold text-[14px] leading-[22px] text-white">
+                      Back it because you believe in it.
+                    </h4>
+                    <p className="mt-2 font-epilogue font-normal leading-[22px] text-[#808191]">
+                      Support the product because it speaks to you.
+                    </p>
+                  </div>
+
+                  {questions.map((question, index) => (
+                    <div key={question.q ?? index} className="my-4">
+                      <label
+                        htmlFor={`q-${index}`}
+                        className="font-epilogue font-semibold text-[16px] text-white"
+                      >
+                        {question.q}
+                      </label>
+
+                      {question.type === "short" ? (
+                        <textarea
+                          id={`q-${index}`}
+                          rows={2}
+                          placeholder="Your answer..."
+                          className="w-full py-2 my-2 sm:px-[20px] px-[15px] outline-none border-[1px] border-[#3a3a43] bg-transparent font-epilogue text-white text-[18px] leading-[30px] placeholder:text-[#4b5264] rounded-[10px]"
+                          value={newReview.questionAnswers[question.q] ?? ""}
+                          onChange={(e) =>
+                            handleAnswerChange(question.q, e.target.value)
+                          }
+                        />
+                      ) : (
+                        (question.options ?? []).map((option, oIdx) => (
+                          <div key={oIdx} className="flex items-center my-2">
+                            <input
+                              type="radio"
+                              id={`q-${index}-o-${oIdx}`}
+                              name={`q-${index}`}
+                              value={option}
+                              className="mr-2"
+                              checked={
+                                newReview.questionAnswers[question.q] === option
+                              }
+                              onChange={(e) =>
+                                handleAnswerChange(question.q, e.target.value)
+                              }
+                            />
+                            <label
+                              htmlFor={`q-${index}-o-${oIdx}`}
+                              className="font-epilogue font-normal text-[16px] text-white"
+                            >
+                              {option}
+                            </label>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  ))}
+
+                  <CustomButton
+                    btnType="submit"
+                    title={
+                      isValidating
+                        ? "Validating answers…"
+                        : isLoading
+                          ? "Submitting…"
+                          : "Submit Review"
+                    }
+                    styles={`w-full transition duration-500 ${
+                      isValidating || isLoading
+                        ? "bg-[#3a3a43] cursor-not-allowed opacity-60"
+                        : "bg-[#8c6dfd] hover:bg-[#00cec9]"
+                    }`}
+                    disabled={isValidating || isLoading}
+                  />
+
+                  {(isValidating || isLoading) && (
+                    <p className="mt-2 text-center font-epilogue text-[13px] text-[#808191] animate-pulse">
+                      {isValidating
+                        ? "Checking your answers for quality…"
+                        : "Processing — please keep this page open…"}
+                    </p>
+                  )}
+                </form>
+              </>
+            )}
           </div>
         </div>
       </div>
