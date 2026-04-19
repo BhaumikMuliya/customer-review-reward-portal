@@ -33,13 +33,13 @@ import { useStateAuth } from "../context/StateProvider";
 // }
 const UserLogin = () => {
   const navigate = useNavigate();
-  const { walletAddress, walletConnected, connectWallet, userLogin } =
+  const { walletAddress, walletConnected, connectWallet, companyLogin } =
     useStateAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await userLogin();
-    navigate("/home");
+    await companyLogin();
+    navigate("/company");
   };
 
   return (
