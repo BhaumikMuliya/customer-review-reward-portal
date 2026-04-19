@@ -11,7 +11,7 @@ const Profile = () => {
   React.useEffect(() => {
     const getDiam = async () => {
       const res = await axios.get(
-        "https://critiqall-backend.onrender.com/customers/getbalance",
+        import.meta.env.VITE_BACKEND_ORIGIN + "/customers/getbalance",
         { params: { pkey: userData.pkey } },
       );
       console.log(res);

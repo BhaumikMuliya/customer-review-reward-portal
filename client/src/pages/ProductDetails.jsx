@@ -26,7 +26,7 @@ const ProductDetails = () => {
 
   const fetchReviewsAndQuestions = useCallback(async () => {
     const questionsResponse = await axios.get(
-      `https://critiqall-backend.onrender.com/api/form/questions/${state.id}`,
+      import.meta.env.VITE_BACKEND_ORIGIN + `/api/form/questions/${state.id}`,
     );
     console.log(questionsResponse);
     setQuestions(questionsResponse.data.questions);
@@ -82,7 +82,7 @@ const ProductDetails = () => {
         console.log(JSON.stringify(newReview));
         const rev = JSON.stringify(newReview);
         const res = await axios.post(
-          "https://critiqall-backend.onrender.com/customers/sendmoney",
+          import.meta.env.VITE_BACKEND_ORIGIN + "/customers/sendmoney",
           {
             key: userData.pkey,
           },

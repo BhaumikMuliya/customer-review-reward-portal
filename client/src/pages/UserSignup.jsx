@@ -30,7 +30,7 @@ const UserSignup = () => {
       const generateOTP = Math.floor(1000 + Math.random() * 9000);
       setReal(generateOTP);
       const response = await axios.post(
-        "http://critiqall-backend.onrender.com/customers/sendOTP",
+        import.meta.env.VITE_BACKEND_ORIGIN + "/customers/sendotp",
         {
           otp: generateOTP,
           email: companyEmail,
@@ -95,7 +95,7 @@ const UserSignup = () => {
 
       // Example POST request using axios
       const response = await axios.post(
-        "https://critiqall-backend.onrender.com/customers/create",
+        import.meta.env.VITE_BACKEND_ORIGIN + "/customers/create",
         dataToSend,
       );
       console.log(response.data); // Handle response as needed
@@ -172,6 +172,7 @@ const UserSignup = () => {
               onChange={(e) => setOtp(e.target.value)}
             />
             <button
+              type="button"
               style={{ marginTop: "5vh" }}
               className="submit-button"
               onClick={sendOTP}
@@ -179,7 +180,7 @@ const UserSignup = () => {
               Send OTP
             </button>{" "}
             &nbsp;
-            <button className="submit-button" onClick={verify}>
+            <button type="button" className="submit-button" onClick={verify}>
               Verify
             </button>
           </div>

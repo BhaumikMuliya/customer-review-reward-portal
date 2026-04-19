@@ -79,7 +79,7 @@ const Signup = () => {
 
       // Example POST request using axios
       const response = await axios.post(
-        "https://critiqall-backend.onrender.com/api/users/signup",
+        import.meta.env.VITE_BACKEND_ORIGIN + "/api/users/signup",
         dataToSend,
       );
       console.log(response); // Handle response as needed

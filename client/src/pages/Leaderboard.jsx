@@ -9,13 +9,13 @@ const Leaderboard = () => {
   useEffect(() => {
     const getalluser = async () => {
       const res = await axios.get(
-        "https://critiqall-backend.onrender.com/customers/getall",
+        import.meta.env.VITE_BACKEND_ORIGIN + "/customers/getall",
       );
       const user = res.data;
       var alld = [];
       for (var i = 0; i < user.length; i++) {
         const res2 = await axios.get(
-          "https://critiqall-backend.onrender.com/customers/getbalance",
+          import.meta.env.VITE_BACKEND_ORIGIN + "/customers/getbalance",
           {
             params: { pkey: user[i].pkey },
           },
