@@ -15,7 +15,6 @@
 }
 
 .sec1left h1 {
-
   line-height: 5rem;
   font-size: 4.5rem;
   font-weight: 700;
@@ -37,19 +36,17 @@
   display: flex;
   justify-content: right;
   align-items: center;
-  background: radial-gradient(circle at 53% 50%, #645d2c 10%, rgb(19 19 26 / var(--tw-bg-opacity)) 45%);
+  background: radial-gradient(
+    circle at 53% 50%,
+    #645d2c 10%,
+    rgb(19 19 26 / var(--tw-bg-opacity)) 45%
+  );
 }
 
 .sec1right img {
   width: 60%;
   border-radius: 20%;
 }
-
-
-
-
-
-
 
 .card4 {
   margin-top: 8vh;
@@ -73,11 +70,25 @@
 .card4 {
   animation-name: rotate_500;
   background-color: var(--primary);
-  background-image: radial-gradient(circle at 100% 0%, hsla(0, 0%, 100%, 0.08) 29.5%, hsla(0, 0%, 100%, 0) 30%),
-    radial-gradient(circle at 100% 0%, hsla(0, 0%, 100%, 0.08) 39.5%, hsla(0, 0%, 100%, 0) 40%),
-    radial-gradient(circle at 100% 0%, hsla(0, 0%, 100%, 0.08) 49.5%, hsla(0, 0%, 100%, 0) 50%);
+  background-image:
+    radial-gradient(
+      circle at 100% 0%,
+      hsla(0, 0%, 100%, 0.08) 29.5%,
+      hsla(0, 0%, 100%, 0) 30%
+    ),
+    radial-gradient(
+      circle at 100% 0%,
+      hsla(0, 0%, 100%, 0.08) 39.5%,
+      hsla(0, 0%, 100%, 0) 40%
+    ),
+    radial-gradient(
+      circle at 100% 0%,
+      hsla(0, 0%, 100%, 0.08) 49.5%,
+      hsla(0, 0%, 100%, 0) 50%
+    );
   border-radius: 0.5em;
-  box-shadow: 0 0 0 hsl(0, 0%, 80%),
+  box-shadow:
+    0 0 0 hsl(0, 0%, 80%),
     0 0 0 hsl(0, 0%, 100%),
     -0.2rem 0 0.75rem 0 hsla(0, 0%, 0%, 0.3);
   color: hsl(0, 0%, 100%);
@@ -102,7 +113,9 @@
 }
 
 .card__info {
-  font: 0.75em/1 "DM Sans", sans-serif;
+  font:
+    0.75em/1 "DM Sans",
+    sans-serif;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -135,7 +148,12 @@
 }
 
 .card__chip-texture {
-  background-image: linear-gradient(-80deg, hsla(0, 0%, 100%, 0), hsla(0, 0%, 100%, 0.6) 48% 52%, hsla(0, 0%, 100%, 0));
+  background-image: linear-gradient(
+    -80deg,
+    hsla(0, 0%, 100%, 0),
+    hsla(0, 0%, 100%, 0.6) 48% 52%,
+    hsla(0, 0%, 100%, 0)
+  );
 }
 
 .card__type {
@@ -146,7 +164,11 @@
 .card__digit-group,
 .card__exp-date,
 .card__name {
-  background: linear-gradient(hsl(0, 0%, 100%), hsl(0, 0%, 85%) 15% 55%, hsl(0, 0%, 70%) 70%);
+  background: linear-gradient(
+    hsl(0, 0%, 100%),
+    hsl(0, 0%, 85%) 15% 55%,
+    hsl(0, 0%, 70%) 70%
+  );
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -251,7 +273,11 @@
 .card__texture {
   animation-name: texture;
   /* background-image: linear-gradient(-80deg,hsla(0,0%,100%,0.3) 25%,#3f8aac8b 45%); */
-  background-image: linear-gradient(-80deg, hsl(39.88deg 63.84% 23.64% / 30%) 25%, #00055966 45%);
+  background-image: linear-gradient(
+    -80deg,
+    hsl(39.88deg 63.84% 23.64% / 30%) 25%,
+    #00055966 45%
+  );
 }
 
 /* Dark theme */
@@ -264,11 +290,11 @@
 
 /* Animation */
 @keyframes rotate_500 {
-
   from,
   to {
     animation-timing-function: ease-in;
-    box-shadow: 0 0 0 hsl(0, 0%, 80%),
+    box-shadow:
+      0 0 0 hsl(0, 0%, 80%),
       0.1rem 0 0 hsl(0, 0%, 100%),
       -0.2rem 0 0.75rem 0 hsla(0, 0%, 0%, 0.3);
     transform: rotateY(-10deg);
@@ -277,7 +303,8 @@
   25%,
   75% {
     animation-timing-function: ease-out;
-    box-shadow: 0 0 0 hsl(0, 0%, 80%),
+    box-shadow:
+      0 0 0 hsl(0, 0%, 80%),
       0 0 0 hsl(0, 0%, 100%),
       -0.25rem -0.05rem 1rem 0.15rem hsla(0, 0%, 0%, 0.3);
     transform: rotateY(0deg);
@@ -285,7 +312,8 @@
 
   50% {
     animation-timing-function: ease-in;
-    box-shadow: -0.1rem 0 0 hsl(0, 0%, 80%),
+    box-shadow:
+      -0.1rem 0 0 hsl(0, 0%, 80%),
       0 0 0 hsl(0, 0%, 100%),
       -0.3rem -0.1rem 1.5rem 0.3rem hsla(0, 0%, 0%, 0.3);
     transform: rotateY(10deg);
@@ -293,7 +321,6 @@
 }
 
 @keyframes texture {
-
   from,
   to {
     transform: translate3d(0, 0, 0);
@@ -304,7 +331,7 @@
   }
 }
 
-@media(max-width:750px) {
+@media (max-width: 750px) {
   .sec1out {
     flex-direction: column;
     height: 100vh;
@@ -325,7 +352,7 @@
   .sec1left h1 {
     font-size: 2.5rem;
     text-align: center;
-    line-height: 3rem
+    line-height: 3rem;
   }
 
   .sec1right {

@@ -6,7 +6,7 @@ import Web3 from "web3";
 import { useStateAuth } from "../context/StateProvider";
 
 const MarketPlace = () => {
-  const {userData}=useStateAuth();
+  const { userData } = useStateAuth();
   const [isLoading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
   const { ethereum } = window;
@@ -24,7 +24,7 @@ const MarketPlace = () => {
       const deployedNetwork = MoneyDistribution.networks[networkId];
       const contract = new web3.eth.Contract(
         MoneyDistribution.abi,
-        deployedNetwork.address
+        deployedNetwork.address,
       );
       console.log(contract);
       setState({ web3: web3, contract: contract });
@@ -84,10 +84,13 @@ const MarketPlace = () => {
 
         {!isLoading &&
           products.length > 0 &&
-          products.map((product) => (
-            (userData.walletAddress==product.owner)?<></>:
-            <MarketCard key={product.id} {...product} />
-          ))}
+          products.map((product) =>
+            userData.walletAddress == product.owner ? (
+              <></>
+            ) : (
+              <MarketCard key={product.id} {...product} />
+            ),
+          )}
       </div>
     </div>
   );

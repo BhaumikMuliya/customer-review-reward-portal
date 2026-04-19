@@ -31,7 +31,7 @@ export const FlowProvider = ({ children }) => {
     // const products = await contract.call("getProducts");
 
     const products = await fetch("https://fakestoreapi.com/products").then(
-      (res) => res.json()
+      (res) => res.json(),
     );
     const parsedCampaings = products.map((product, i) => ({
       pId: i,

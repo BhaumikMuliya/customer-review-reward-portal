@@ -8,13 +8,18 @@ const Leaderboard = () => {
 
   useEffect(() => {
     const getalluser = async () => {
-      const res = await axios.get("https://critiqall-backend.onrender.com/customers/getall");
+      const res = await axios.get(
+        "https://critiqall-backend.onrender.com/customers/getall",
+      );
       const user = res.data;
       var alld = [];
       for (var i = 0; i < user.length; i++) {
-        const res2 = await axios.get("https://critiqall-backend.onrender.com/customers/getbalance", {
-          params: { pkey: user[i].pkey },
-        });
+        const res2 = await axios.get(
+          "https://critiqall-backend.onrender.com/customers/getbalance",
+          {
+            params: { pkey: user[i].pkey },
+          },
+        );
         alld.push({ name: user[i].name, balance: res2.data.balance });
       }
       for (var k = 0; k < alld.length; k++) {

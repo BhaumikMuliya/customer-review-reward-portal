@@ -71,7 +71,9 @@ const ProtectedRoutes = ({ user }) => {
     if (serverStatus === "down") {
       if (!hasAlertedRef.current) {
         hasAlertedRef.current = true;
-        window.alert("Server is not running. Please start the server and refresh the page.");
+        window.alert(
+          "Server is not running. Please start the server and refresh the page.",
+        );
       }
       return <Navigate to="/" replace state={{ from: location }} />;
     }

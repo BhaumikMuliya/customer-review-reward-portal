@@ -33,12 +33,13 @@ const DisplayProducts = ({ title, isLoading, products }) => {
           products.length > 0 &&
           products.map((product) => (
             <>
-            {(product.status==="ongoing")&&
-            <ProductCard
-              key={product.id}
-              {...product}
-              handleClick={() => handleNavigate(product)}
-            />}
+              {product.status === "ongoing" && (
+                <ProductCard
+                  key={product.id}
+                  {...product}
+                  handleClick={() => handleNavigate(product)}
+                />
+              )}
             </>
           ))}
       </div>

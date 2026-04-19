@@ -81,12 +81,12 @@ const RouterProtocol = () => {
 
           const provider1 = new ethers.providers.JsonRpcProvider(
             selectedToken.rpc_url,
-            Number(selectedToken.chainId)
+            Number(selectedToken.chainId),
           );
 
           const provider2 = new ethers.providers.JsonRpcProvider(
             selectedToken1.rpc_url,
-            Number(selectedToken1.chainId)
+            Number(selectedToken1.chainId),
           );
           let to1 = selectedToken.address;
           let from1 = selectedToken1.address;
@@ -121,14 +121,14 @@ const RouterProtocol = () => {
 
           const provider1 = new ethers.providers.JsonRpcProvider(
             selectedToken.rpc_url,
-            Number(selectedToken.chainId)
+            Number(selectedToken.chainId),
           );
 
           // alert(provider1);
           toast.success("Wallet connected successfully!");
           const provider2 = new ethers.providers.JsonRpcProvider(
             selectedToken1.rpc_url,
-            Number(selectedToken1.chainId)
+            Number(selectedToken1.chainId),
           );
           const signer = provider.getSigner();
 
@@ -194,7 +194,7 @@ const RouterProtocol = () => {
             signer,
             from1, // fromTokenAddress (USDT on Mumbai)
             quoteData.allowanceTo, // quote.allowanceTo in getQuote(params) response from step 1
-            ethers.constants.MaxUint256 // amount to approve (infinite approval)
+            ethers.constants.MaxUint256, // amount to approve (infinite approval)
           );
           setStep2("✅");
 
@@ -207,7 +207,7 @@ const RouterProtocol = () => {
 
               widgetId: 0, // get your unique wdiget id by contacting us on Telegram
             },
-            quoteData
+            quoteData,
           ); // params have been defined in step 1 and quoteData has also been fetched in step 1
 
           // sending the transaction using the data given by the pathfinder
@@ -262,7 +262,7 @@ const RouterProtocol = () => {
 
               widgetId: 0, // get your unique wdiget id by contacting us on Telegram
             },
-            quoteData
+            quoteData,
           ); // params have been defined in step 1 and quoteData has also been fetched in step 1
           console.log("response");
           setStep2("✅");
@@ -307,7 +307,7 @@ const RouterProtocol = () => {
     wallet,
     tokenAddress,
     approvalAddress,
-    amount
+    amount,
   ) => {
     // Transactions with the native token don't need approval
     if (tokenAddress === ethers.constants.AddressZero) {
@@ -318,7 +318,7 @@ const RouterProtocol = () => {
     const erc20 = new ethers.Contract(tokenAddress, ABI, wallet);
     const allowance = await erc20.allowance(
       await wallet.getAddress(),
-      approvalAddress
+      approvalAddress,
     );
     if (allowance.lt(amount)) {
       const approveTx = await erc20.approve(approvalAddress, amount, {

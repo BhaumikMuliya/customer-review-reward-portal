@@ -79,7 +79,8 @@ function App() {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 3500);
 
-    const healthUrl = import.meta.env.VITE_BACKEND_HEALTH_URL || "/api/pingServer";
+    const healthUrl =
+      import.meta.env.VITE_BACKEND_HEALTH_URL || "/api/pingServer";
 
     (async () => {
       try {
@@ -117,7 +118,9 @@ function App() {
   if (backendStatus === "down") {
     if (!hasAlertedRef.current) {
       hasAlertedRef.current = true;
-      window.alert("Backend server is not running. Please start the backend, then refresh this page.");
+      window.alert(
+        "Backend server is not running. Please start the backend, then refresh this page.",
+      );
     }
 
     return (

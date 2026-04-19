@@ -1,5 +1,5 @@
-import React from 'react'
-import "./Card.css"
+import React from "react";
+import "./Card.css";
 
 // Parameter Destructuring
 const Card = ({ imgUrl, date, title }) => {
@@ -14,7 +14,7 @@ const Card = ({ imgUrl, date, title }) => {
         <p>Read Full Article</p>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default Card;

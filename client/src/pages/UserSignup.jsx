@@ -17,7 +17,7 @@ const UserSignup = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    console.log("sg", token)
+    console.log("sg", token);
     if (token != null) {
       alert("You are already logged in");
       window.location.href = "/home";
@@ -29,10 +29,13 @@ const UserSignup = () => {
       const { companyEmail } = formData;
       const generateOTP = Math.floor(1000 + Math.random() * 9000);
       setReal(generateOTP);
-      const response = await axios.post("http://critiqall-backend.onrender.com/customers/sendOTP", {
-        otp: generateOTP,
-        email: companyEmail,
-      });
+      const response = await axios.post(
+        "http://critiqall-backend.onrender.com/customers/sendOTP",
+        {
+          otp: generateOTP,
+          email: companyEmail,
+        },
+      );
       console.log(response.data);
 
       setVer(false);
@@ -55,7 +58,6 @@ const UserSignup = () => {
       console.error("Error:", error);
     }
   };
-
 
   useEffect(() => {
     setVer(false);
@@ -94,7 +96,7 @@ const UserSignup = () => {
       // Example POST request using axios
       const response = await axios.post(
         "https://critiqall-backend.onrender.com/customers/create",
-        dataToSend
+        dataToSend,
       );
       console.log(response.data); // Handle response as needed
 

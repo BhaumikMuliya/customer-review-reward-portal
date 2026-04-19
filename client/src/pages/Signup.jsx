@@ -80,7 +80,7 @@ const Signup = () => {
       // Example POST request using axios
       const response = await axios.post(
         "https://critiqall-backend.onrender.com/api/users/signup",
-        dataToSend
+        dataToSend,
       );
       console.log(response); // Handle response as needed
       if (response.data.message == "Signup successful!") {

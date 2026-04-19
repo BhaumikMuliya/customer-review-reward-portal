@@ -1,25 +1,65 @@
 import "./Mastercard.css";
-import copy from 'copy-text-to-clipboard';
+import copy from "copy-text-to-clipboard";
 import { FaRegCopy } from "react-icons/fa";
 import { toast } from "react-toastify";
-const Mastercard = ({name,avax,diam,pkey,skey}) => {
-    function copy1(){
-        copy(pkey);
-        toast.success("Public Key Copied");
-    }
-    function copy2(){
-        copy(skey);
-        toast.success("Secret Key Copied");
-    }
+const Mastercard = ({ name, avax, diam, pkey, skey }) => {
+  function copy1() {
+    copy(pkey);
+    toast.success("Public Key Copied");
+  }
+  function copy2() {
+    copy(skey);
+    toast.success("Secret Key Copied");
+  }
   return (
-    <div><div className="flip-card8">
-    <div className="flip-card-inner8">
-        <div className="flip-card-front8">
+    <div>
+      <div className="flip-card8">
+        <div className="flip-card-inner8">
+          <div className="flip-card-front8">
             <p className="heading_82648">Criti-Q Card</p>
-            <svg className="logo8" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="56" height="56" viewBox="0 0 48 48">
-            <path fill="#f4c587" d="M32 10A14 14 0 1 0 32 38A14 14 0 1 0 32 10Z"></path><path fill="#99d2ec" d="M16 10A14 14 0 1 0 16 38A14 14 0 1 0 16 10Z"></path><path fill="#d6d3e9" d="M18,24c0,4.755,2.376,8.95,6,11.48c3.624-2.53,6-6.725,6-11.48s-2.376-8.95-6-11.48 C20.376,15.05,18,19.245,18,24z"></path>
+            <svg
+              className="logo8"
+              xmlns="http://www.w3.org/2000/svg"
+              x="0px"
+              y="0px"
+              width="56"
+              height="56"
+              viewBox="0 0 48 48"
+            >
+              <path
+                fill="#f4c587"
+                d="M32 10A14 14 0 1 0 32 38A14 14 0 1 0 32 10Z"
+              ></path>
+              <path
+                fill="#99d2ec"
+                d="M16 10A14 14 0 1 0 16 38A14 14 0 1 0 16 10Z"
+              ></path>
+              <path
+                fill="#d6d3e9"
+                d="M18,24c0,4.755,2.376,8.95,6,11.48c3.624-2.53,6-6.725,6-11.48s-2.376-8.95-6-11.48 C20.376,15.05,18,19.245,18,24z"
+              ></path>
             </svg>
-            <svg version="1.1" className="chip8" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="42px" height="42px" viewBox="0 0 50 50" xml:space="preserve">  <image id="image0" width="50" height="50" x="0" y="0" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+            <svg
+              version="1.1"
+              className="chip8"
+              id="Layer_1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              x="0px"
+              y="0px"
+              width="42px"
+              height="42px"
+              viewBox="0 0 50 50"
+              xml:space="preserve"
+            >
+              {" "}
+              <image
+                id="image0"
+                width="50"
+                height="50"
+                x="0"
+                y="0"
+                href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAMAAAAp4XiDAAAABGdBTUEAALGPC/xhBQAAACBjSFJN
               AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAB6VBMVEUAAACNcTiVeUKVeUOY
               fEaafEeUeUSYfEWZfEaykleyklaXe0SWekSZZjOYfEWYe0WXfUWXe0WcgEicfkiXe0SVekSXekSW
               ekKYe0a9nF67m12ZfUWUeEaXfESVekOdgEmVeUWWekSniU+VeUKVeUOrjFKYfEWliE6WeESZe0GS
@@ -44,9 +84,30 @@ const Mastercard = ({name,avax,diam,pkey,skey}) => {
               S24ra7Tq1cbWjpXV3sHRCb1idXZ0sGdltXNxRateRwHRAACYHutzk/2I5QAAACV0RVh0ZGF0ZTpj
               cmVhdGUAMjAyMy0wMi0xM1QwODoxNToyOSswMDowMEUnN7UAAAAldEVYdGRhdGU6bW9kaWZ5ADIw
               MjMtMDItMTNUMDg6MTU6MjkrMDA6MDA0eo8JAAAAKHRFWHRkYXRlOnRpbWVzdGFtcAAyMDIzLTAy
-              LTEzVDA4OjE1OjI5KzAwOjAwY2+u1gAAAABJRU5ErkJggg=="></image>
+              LTEzVDA4OjE1OjI5KzAwOjAwY2+u1gAAAABJRU5ErkJggg=="
+              ></image>
             </svg>
-            <svg version="1.1" className="contactless8" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="42px" height="42px" viewBox="0 0 50 50" xml:space="preserve">  <image id="image0" width="50" height="50" x="0" y="0" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAQAAAC0NkA6AAAABGdBTUEAALGPC/xhBQAAACBjSFJN
+            <svg
+              version="1.1"
+              className="contactless8"
+              id="Layer_1"
+              xmlns="http://www.w3.org/2000/svg"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              x="0px"
+              y="0px"
+              width="42px"
+              height="42px"
+              viewBox="0 0 50 50"
+              xml:space="preserve"
+            >
+              {" "}
+              <image
+                id="image0"
+                width="50"
+                height="50"
+                x="0"
+                y="0"
+                href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAQAAAC0NkA6AAAABGdBTUEAALGPC/xhBQAAACBjSFJN
               AAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAJcEhZ
               cwAACxMAAAsTAQCanBgAAAAHdElNRQfnAg0IEzgIwaKTAAADDklEQVRYw+1XS0iUURQ+f5qPyjQf
               lGRFEEFK76koKGxRbWyVVLSOgsCgwjZBJJYuKogSIoOonUK4q3U0WVBWFPZYiIE6kuArG3VGzK/F
@@ -65,25 +126,56 @@ const Mastercard = ({name,avax,diam,pkey,skey}) => {
               xDyxm9MmISKCWrzB7bSlaqGlsf0FC0gMjzTg6GgAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjMtMDIt
               MTNUMDg6MTk6NTYrMDA6MDCjlq7LAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIzLTAyLTEzVDA4OjE5
               OjU2KzAwOjAw0ssWdwAAACh0RVh0ZGF0ZTp0aW1lc3RhbXAAMjAyMy0wMi0xM1QwODoxOTo1Nisw
-              MDowMIXeN6gAAAAASUVORK5CYII="></image>
+              MDowMIXeN6gAAAAASUVORK5CYII="
+              ></image>
             </svg>
             <p className="number8">AVAX Balance: {avax} AVAX</p>
-            
+
             <p className="date_82648">DIAM Balance: {diam} DIAM</p>
             <p className="name8">{name}</p>
-        </div>
-        <div className="flip-card-back8">
+          </div>
+          <div className="flip-card-back8">
             <div className="strip8">
-                <div style={{display:"flex",alignItems:"center",justifyContent:"center",fontSize: "1.2em",color:"white"}}>Public Key : {pkey.slice(0,5)}...&nbsp;&nbsp; <span className="copy" onClick={copy1}><FaRegCopy  /></span></div><br/><br/>
-                <div style={{display:"flex",alignItems:"center",justifyContent:"center",fontSize: "1.2em"}}>Secret Key : {skey.slice(0,5)}...&nbsp;&nbsp; <span className="copy" onClick={copy2}><FaRegCopy /></span>🤫</div></div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "1.2em",
+                  color: "white",
+                }}
+              >
+                Public Key : {pkey.slice(0, 5)}...&nbsp;&nbsp;{" "}
+                <span className="copy" onClick={copy1}>
+                  <FaRegCopy />
+                </span>
+              </div>
+              <br />
+              <br />
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "1.2em",
+                }}
+              >
+                Secret Key : {skey.slice(0, 5)}...&nbsp;&nbsp;{" "}
+                <span className="copy" onClick={copy2}>
+                  <FaRegCopy />
+                </span>
+                🤫
+              </div>
+            </div>
             {/* <div className="mstrip8"></div>
             <div className="sstrip8">
               <p className="code8"></p>
             </div> */}
+          </div>
         </div>
+      </div>
     </div>
-</div></div>
-  )
-}
+  );
+};
 
-export default Mastercard
+export default Mastercard;

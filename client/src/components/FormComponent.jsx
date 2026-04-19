@@ -68,7 +68,7 @@ const FormComponent = () => {
   const handleDeleteOption = (qIndex, optIndex) => {
     const updatedQuestions = [...questions];
     updatedQuestions[qIndex].options = updatedQuestions[qIndex].options.filter(
-      (_, i) => i !== optIndex
+      (_, i) => i !== optIndex,
     );
     setQuestions(updatedQuestions);
   };
@@ -194,7 +194,7 @@ const FormComponent = () => {
     formData.append("file", file);
     formData.append(
       "upload_preset",
-      import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
+      import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET,
     );
     console.log(import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
     var imageUrl = "";
@@ -203,7 +203,7 @@ const FormComponent = () => {
         `https://api.cloudinary.com/v1_1/${
           import.meta.env.VITE_CLOUDINARY_CLOUD_NAME
         }/image/upload`,
-        formData
+        formData,
       );
 
       imageUrl = response.data.secure_url;
@@ -271,7 +271,7 @@ const FormComponent = () => {
           exceldata,
           noOfReview,
           productDescription,
-          userdata.name
+          userdata.name,
         )
         .send({ value: Web3.utils.toWei(amt, "ether"), from: accountss[0] });
 

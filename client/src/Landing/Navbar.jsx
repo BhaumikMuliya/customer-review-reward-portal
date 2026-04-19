@@ -36,8 +36,8 @@ const Navbar = () => {
               userData != null && userData.type === "user"
                 ? "/home"
                 : userData != null && userData.type === "company"
-                ? "/company"
-                : "/"
+                  ? "/company"
+                  : "/"
             }
             className="flex items-center"
           >

@@ -35,7 +35,7 @@ export const StateProvider = ({ children }) => {
   const [walletConnected, setWalletConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState("");
   const [userData, setUserData] = useState(
-    JSON.parse(localStorage.getItem("token")) || {}
+    JSON.parse(localStorage.getItem("token")) || {},
   );
   const { ethereum } = window;
   const [download, setDownload] = useState(false);
@@ -58,7 +58,7 @@ export const StateProvider = ({ children }) => {
     const deployedNetwork = MoneyDistribution.networks[networkId];
     const contract = new web3.eth.Contract(
       MoneyDistribution.abi,
-      deployedNetwork && deployedNetwork.address
+      deployedNetwork && deployedNetwork.address,
     );
     setState({ web3, contract });
 
@@ -96,7 +96,7 @@ export const StateProvider = ({ children }) => {
           "https://critiqall-backend.onrender.com/api/users/login",
           {
             walletAddress,
-          }
+          },
         );
         localStorage.setItem("token", JSON.stringify(response.data.user));
         setUserData((prevUser) => ({ ...prevUser, ...response.data.user }));
@@ -117,7 +117,7 @@ export const StateProvider = ({ children }) => {
           "https://critiqall-backend.onrender.com/customers/login",
           {
             walletAddress,
-          }
+          },
         );
         localStorage.setItem("token", JSON.stringify(response.data.user));
         setUserData((prevUser) => ({ ...prevUser, ...response.data.user }));
@@ -197,7 +197,7 @@ export const StateProvider = ({ children }) => {
     // );
     try {
       const res1 = await axios.get(
-        `https://critiqall-backend.onrender.com/phone?phone=${number}`
+        `https://critiqall-backend.onrender.com/phone?phone=${number}`,
       );
       console.log(res1.data);
       if (res1.data.status === 0) {
@@ -210,7 +210,7 @@ export const StateProvider = ({ children }) => {
             priority: 1,
             organization: 108,
           },
-          initOverrides
+          initOverrides,
         );
         console.log(res2.data);
         const supervisorId = res2.data.id;
@@ -224,28 +224,31 @@ export const StateProvider = ({ children }) => {
             phone_code: "91",
             phone_number: `${number}`,
           },
-          initOverrides
+          initOverrides,
         );
         const subscriberId = res4.data.id;
         setSubId(subscriberId);
-        const sendData = await axios.post("https://critiqall-backend.onrender.com/phone", {
-          sid: subscriberId,
-          id: supervisorId,
-          phone: number.toString(),
-        });
+        const sendData = await axios.post(
+          "https://critiqall-backend.onrender.com/phone",
+          {
+            sid: subscriberId,
+            id: supervisorId,
+            phone: number.toString(),
+          },
+        );
         console.log(sendData);
         // sending otp
         const otpsend = await axios.post(
           `https://api.callchimp.ai/v1/supervisors/${supervisorId}/send_otp`,
           {},
-          initOverrides
+          initOverrides,
         );
         console.log(otpsend);
       } else if (!res1.data.data.verified) {
         const otpsend = await axios.post(
           `https://api.callchimp.ai/v1/supervisors/${res1.data.data.id}/send_otp`,
           {},
-          initOverrides
+          initOverrides,
         );
         console.log(otpsend);
 
@@ -258,7 +261,7 @@ export const StateProvider = ({ children }) => {
           {
             lead: sid,
           },
-          initOverrides
+          initOverrides,
         );
         console.log(res);
       }
@@ -277,7 +280,7 @@ export const StateProvider = ({ children }) => {
             "Content-Type": "application/json",
             "x-api-key": import.meta.env.VITE_CALLCHIMP_API_KEY,
           },
-        }
+        },
       );
       console.log(res.data);
 
@@ -286,7 +289,7 @@ export const StateProvider = ({ children }) => {
         {
           lead: subId,
         },
-        initOverrides
+        initOverrides,
       );
       console.log(call);
     } catch (error) {
