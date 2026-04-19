@@ -88,7 +88,7 @@ const MarketCard = ({
           <div
             className={`font-epilogue font-semibold text-[16px] leading-[26px] text-white px-4 rounded-lg bg-green-500 py-2 my-4`}
           >
-            <button className="submit-btn" onClick={f11}>
+            <button className="submit-btn" onClick={(e) => { e.stopPropagation(); f11(); }}>
               Buy product review
             </button>
           </div>
