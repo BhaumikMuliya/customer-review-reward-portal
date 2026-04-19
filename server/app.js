@@ -20,10 +20,10 @@ const { isJsonStr } = require('./lib/helper.js');
 const ERROR_HANDLER = require('./lib/utils/utils.js');
 
 // Routes import
-// const usersRoute = require('./routes/users.js');
-// const questionsRoute = require('./routes/questions.js');
-// const customerRoute = require('./routes/customer.js');
-// const phoneRoute = require('./routes/phone.js');
+const usersRoute = require('./routes/users.js');
+const questionsRoute = require('./routes/questions.js');
+const customerRoute = require('./routes/customer.js');
+const phoneRoute = require('./routes/phone.js');
 const config = require('./config/config.js');
 
 
@@ -119,10 +119,10 @@ app.get(config.server.route + '/pingServer', (req, res) => {
 });
 
 
-// app.use(`${config.server.route}/customers`, customerRoute);
-// app.use(`${config.server.route}/users`, usersRoute);
-// app.use(`${config.server.route}/questions`, questionsRoute);
-// app.use(`${config.server.route}/phone`, phoneRoute);
+app.use(`${config.server.route}/customers`, customerRoute);
+app.use(`${config.server.route}/users`, usersRoute);
+app.use(`${config.server.route}/questions`, questionsRoute);
+app.use(`${config.server.route}/phone`, phoneRoute);
 
 // ----------------------------Middleware for catching 404 and forward to error handler
 app.use((req, res, next) => {
