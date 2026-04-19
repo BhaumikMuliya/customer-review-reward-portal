@@ -169,7 +169,7 @@ const MarketPlace = () => {
               key={product.id}
               {...product}
               handleClick={() =>
-                navigate(`/company/product-details/${product.id}`)
+                navigate(`/company/product-details/${product.id}`, { state: product })
               }
             />
           ))}

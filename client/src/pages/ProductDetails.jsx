@@ -7,6 +7,7 @@ import axios from "axios";
 import MoneyDistribution from "../abi/MoneyDistribution.json";
 import { useStateAuth } from "../context/StateProvider";
 import { toast } from "react-toastify";
+
 const ProductDetails = () => {
   const { state } = useLocation();
   const [isLoading, setIsLoading] = useState(false);
