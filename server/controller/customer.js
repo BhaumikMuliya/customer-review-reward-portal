@@ -74,7 +74,9 @@ const createCustomer = async (req, res) => {
 
     if (!response.ok) {
       const text = await response.text();
-      console.error(`Friendbot activation failed (${response.status}): ${text}`);
+      console.error(
+        `Friendbot activation failed (${response.status}): ${text}`,
+      );
       return res.status(502).json({
         message: "Could not activate Diamante account. Please try again later.",
       });
