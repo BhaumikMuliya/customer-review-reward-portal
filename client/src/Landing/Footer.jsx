@@ -14,7 +14,7 @@ const Footer = () => {
             <div className='footin'>
                 
                 
-                    <p><h2>Links</h2></p>
+                    <h2>Links</h2>
                     <p><a className="footlink" href="#">Overons</a></p>
                     <p><a className="footlink" href="#">Social Media</a></p>
                     <p><a className="footlink" href="#">Counters</a></p>
@@ -24,7 +24,7 @@ const Footer = () => {
             <div className='footin'>
             
                 
-                  <p><h2>Company</h2></p>
+                  <h2>Company</h2>
                     <p><a className="footlink" href="#">Terms & Conditions</a></p>
                     <p><a className="footlink" href="#">Privacy Policy</a></p>
                     <p><a className="footlink" href="#">Contact</a></p>
@@ -33,7 +33,7 @@ const Footer = () => {
             <div className='footin'>
               
                 
-                  <p><h2>Contact</h2></p>
+                  <h2>Contact</h2>
                     <p><a className="footlink" href="#">07twik@gmail.com</a></p>
                     <p><a className="footlink" href="#">085-132567</a></p>
                     <p><a className="footlink" href="#">085-132567</a></p>

@@ -13,13 +13,13 @@ const Sec3 = () => {
                             <div className="content2">
                                 <span className="stars2"></span>
                                 <b className="desc2">Its simple:</b>
-                                <p className="desc2">
+                                <div className="desc2">
                                 <ul>
                                     <li>Sign up</li>
                                     <li>Choose a plan</li>
                                     <li>Get your own AI assistant</li>
                                 </ul>
-                                </p>
+                                </div>
                             </div>
                             </div>
                             <div className="face2 front2">
